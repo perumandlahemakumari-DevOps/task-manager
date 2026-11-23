@@ -24,24 +24,36 @@ flowchart LR
     API --> DB[(PostgreSQL)]
     API --> Prom[Prometheus]
     Prom --> Grafana[Grafana dashboard]
-Features
+```
+
+## Features
+
 - Create and list tasks
 - Update task title or completion state
 - Delete tasks
 - Health and readiness endpoints
 - Prometheus metrics endpoint
 - PostgreSQL persistence
-CI/CD and GitOps
+
+## CI/CD and GitOps
+
 1. A feature branch and pull request trigger the CI test job.
-2. Merging to main builds and publishes a SHA-tagged image to GHCR.
+2. Merging to `main` builds and publishes a SHA-tagged image to GHCR.
 3. The GitOps repository is updated to the new image SHA.
 4. Argo CD syncs the GitOps change to the local kind cluster.
 5. Prometheus scrapes app metrics, which are displayed in Grafana.
-The 0.2.0 release was verified end to end: the API change reached Kubernetes through the SHA-tagged image and GitOps update.
-Monitoring
-The application exposes /metrics. Prometheus discovers it through a Kubernetes ServiceMonitor. The Grafana dashboard includes request rate, 5xx error rate, latency, and app availability.
-Repositories
+
+The `0.2.0` release was verified end to end: the API change reached Kubernetes through the SHA-tagged image and GitOps update.
+
+## Monitoring
+
+The application exposes `/metrics`. Prometheus discovers it through a Kubernetes ServiceMonitor. The Grafana dashboard includes request rate, 5xx error rate, latency, and app availability.
+
+## Repositories
+
 - Application and CI: https://github.com/perumandlahemakumari-DevOps/task-manager
 - Kubernetes GitOps configuration: https://github.com/perumandlahemakumari-DevOps/task-manager-gitops
-Limitations
+
+## Limitations
+
 This is a learning and portfolio project running locally in kind. It is not a production deployment. PostgreSQL runs as a single replica, and cluster credentials are created locally rather than stored in Git.
