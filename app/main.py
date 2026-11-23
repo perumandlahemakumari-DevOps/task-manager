@@ -56,7 +56,7 @@ def init_db():
 
 @app.get("/")
 def index():
-    return jsonify(message="Task Manager API", version="0.1.0")
+    return jsonify(message="Task Manager API", version="0.2.0")
 
 
 @app.get("/healthz")
