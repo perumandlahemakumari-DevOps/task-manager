@@ -1,39 +1,47 @@
 # Task Manager: Local Kubernetes GitOps Portfolio
 
-A three-tier task manager built with Python, PostgreSQL, Docker, and Kubernetes.
-The project is being developed locally first, then extended with GitHub Actions,
-Argo CD, Prometheus, and Grafana.
+A Python task management API deployed to a local Kubernetes cluster. This project demonstrates containerisation, CI, GitOps deployment, and application monitoring without using a cloud provider.
 
 ## Architecture
 
-- Web and API tier: Flask
-- Data tier: PostgreSQL
-- Container runtime: Docker
-- Local cluster: kind
-- Deployment configuration: Kubernetes manifests in `deploy/`
+- **Web and API tier:** Flask and Gunicorn
+- **Application tier:** Python task operations and request handling
+- **Data tier:** PostgreSQL
+- **Container:** Docker image published to GitHub Container Registry
+- **Local Kubernetes:** kind
+- **GitOps CD:** Argo CD watches the deployment repository
+- **Monitoring:** Prometheus scrapes application metrics; Grafana displays dashboards
 
-## Current status
-
-- [x] Flask API with health, readiness, and task endpoints
-- [x] PostgreSQL-backed task storage
-- [x] Docker image build
-- [x] Local kind cluster deployment
-- [ ] GitHub Actions CI and image publishing
-- [ ] Argo CD GitOps deployment
-- [ ] Prometheus and Grafana monitoring
-
-## Run locally
-
-The API expects PostgreSQL and a `DATABASE_URL` environment variable.
-For local development, set this variable to your local PostgreSQL connection
-string before starting Flask.
-
-## Kubernetes
-
-The current local manifests are in `deploy/`. PostgreSQL credentials are created
-directly in the local cluster and are not stored in this repository.
-
-## Limitations
-
-This is a learning and portfolio project running on a local kind cluster. It is
-not a production deployment. PostgreSQL currently runs as a single replica.
+```mermaid
+flowchart LR
+    Dev[Code change] --> AppRepo[GitHub application repo]
+    AppRepo --> CI[GitHub Actions: tests and image build]
+    CI --> Registry[GHCR: image tagged by commit SHA]
+    Registry --> GitOps[GitOps repo: desired image tag]
+    GitOps --> Argo[Argo CD]
+    Argo --> K8s[Local kind cluster]
+    K8s --> API[Flask API]
+    API --> DB[(PostgreSQL)]
+    API --> Prom[Prometheus]
+    Prom --> Grafana[Grafana dashboard]
+Features
+- Create and list tasks
+- Update task title or completion state
+- Delete tasks
+- Health and readiness endpoints
+- Prometheus metrics endpoint
+- PostgreSQL persistence
+CI/CD and GitOps
+1. A feature branch and pull request trigger the CI test job.
+2. Merging to main builds and publishes a SHA-tagged image to GHCR.
+3. The GitOps repository is updated to the new image SHA.
+4. Argo CD syncs the GitOps change to the local kind cluster.
+5. Prometheus scrapes app metrics, which are displayed in Grafana.
+The 0.2.0 release was verified end to end: the API change reached Kubernetes through the SHA-tagged image and GitOps update.
+Monitoring
+The application exposes /metrics. Prometheus discovers it through a Kubernetes ServiceMonitor. The Grafana dashboard includes request rate, 5xx error rate, latency, and app availability.
+Repositories
+- Application and CI: https://github.com/perumandlahemakumari-DevOps/task-manager
+- Kubernetes GitOps configuration: https://github.com/perumandlahemakumari-DevOps/task-manager-gitops
+Limitations
+This is a learning and portfolio project running locally in kind. It is not a production deployment. PostgreSQL runs as a single replica, and cluster credentials are created locally rather than stored in Git.
