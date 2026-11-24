@@ -57,3 +57,17 @@ The application exposes `/metrics`. Prometheus discovers it through a Kubernetes
 ## Limitations
 
 This is a learning and portfolio project running locally in kind. It is not a production deployment. PostgreSQL runs as a single replica, and cluster credentials are created locally rather than stored in Git.
+
+## Screenshots
+
+### GitHub Actions
+
+![GitHub Actions test and publish jobs](docs/screenshots/github-actions.png)
+
+### Argo CD
+
+![Task Manager application healthy and synced](docs/screenshots/argocd-healthy-synced.png)
+
+### Grafana
+
+![Task Manager monitoring dashboard](docs/screenshots/grafana-dashboard.png)
